@@ -25,7 +25,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -88,10 +95,11 @@ fun MyApp() {
                 .weight(1f)
         ) {
             if (start.value) {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(235, 94, 11))
-                    ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(235, 94, 11))
+                ) {
                     Text(
                         text = countdownText.value,
                         fontSize = 100.sp,
@@ -142,12 +150,16 @@ fun MyApp() {
                 onClick = {
                     start.value = true
                     val millisInFuture = hour.value * 3600000L + minute.value * 60000L + second.value * 1000L
-                    startCountDown(millisInFuture, {
-                        countdownText.value = it
-                    }, {
-                        countdownText.value = "FINISH!"
-                        playAlarm()
-                    })
+                    startCountDown(
+                        millisInFuture,
+                        {
+                            countdownText.value = it
+                        },
+                        {
+                            countdownText.value = "FINISH!"
+                            playAlarm()
+                        }
+                    )
                 }
             ) {
                 Text(
@@ -229,16 +241,20 @@ fun DarkPreview() {
 }
 
 private fun startCountDown(millisInFuture: Long, tick: (p0: String) -> Unit, finish: () -> Unit) {
-    countDown = CountDown(millisInFuture, {
-        val hms = String.format(
-            "%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours(it),
-            java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes(it) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
-            java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds(it) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1)
-        )
-        tick(hms)
-    }, {
-        finish()
-    })
+    countDown = CountDown(
+        millisInFuture,
+        {
+            val hms = String.format(
+                "%02d:%02d:%02d", java.util.concurrent.TimeUnit.MILLISECONDS.toHours(it),
+                java.util.concurrent.TimeUnit.MILLISECONDS.toMinutes(it) % java.util.concurrent.TimeUnit.HOURS.toMinutes(1),
+                java.util.concurrent.TimeUnit.MILLISECONDS.toSeconds(it) % java.util.concurrent.TimeUnit.MINUTES.toSeconds(1)
+            )
+            tick(hms)
+        },
+        {
+            finish()
+        }
+    )
     countDown?.start()
 }
 
